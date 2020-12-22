@@ -11,10 +11,10 @@ namespace HttpClientFactoryDemo.Services
 {
     public class TodoService : ITodoService
     {
-        private readonly ApiConfig _config;
+        private readonly IApiConfig _config;
 
         private readonly HttpClient _httpClient;
-        public TodoService(ApiConfig config, HttpClient httpClient)
+        public TodoService(IApiConfig config, HttpClient httpClient)
         {
             _config = config;
             _httpClient = httpClient;
@@ -23,7 +23,7 @@ namespace HttpClientFactoryDemo.Services
         public async Task<TodoModel> GetTodo(int id)
         {
             return await _httpClient.GetFromJsonAsync<TodoModel>(
-                $"{_config.BaseUrl}/todos/{id}"
+                $"{_config.BaseUrl}todos/{id}"
                 );
         }
     }

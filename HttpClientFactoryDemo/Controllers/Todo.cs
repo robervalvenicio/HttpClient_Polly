@@ -9,12 +9,12 @@ namespace HttpClientFactoryDemo.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TodoController : Controller
+    public class Todo : Controller
     {
         //Injetar o service Todo
         private readonly ITodoService _todoService;
 
-        public TodoController(ITodoService todoService)
+        public Todo(ITodoService todoService)
         {
             _todoService = todoService;
         }

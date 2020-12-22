@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace HttpClientFactoryDemo
 {
@@ -33,10 +35,14 @@ namespace HttpClientFactoryDemo
             //Singleton
             services.AddSingleton<IApiConfig>(x => x.GetRequiredService<IOptions<ApiConfig>>().Value);
 
-            //Registrar HttpClient
-            services.AddHttpClient<ITodoService, TodoService>(
-                b => b.BaseAddress = new Uri(Configuration["ApiConfig:BaseUri"]));
+            //Criar uma politica de retry(Tente 3x com timeout de 3 segundos)
+            var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError()
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
+            //Registrar HttpClient
+            services.AddHttpClient<ITodoService, TodoService>
+                (b => b.BaseAddress = new Uri(Configuration["ApiConfig:BaseUrl"]))
+                .AddPolicyHandler(retryPolicy);
 
 
             services.AddControllers();
